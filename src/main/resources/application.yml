@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: Exposed demo
+  datasource:
+    driverClassName: org.h2.Driver
+    platform: postgres
+    url: jdbc:h2:mem:testC2
+    username: sa
+    password:
+
+
+logging:
+  level:
+    Exposed: DEBUG
+
+test:
+   xxx: ddd
