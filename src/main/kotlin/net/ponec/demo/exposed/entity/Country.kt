@@ -6,14 +6,14 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 /** Table */
-object States : LongIdTable("state") {
+object Countries : LongIdTable("country") {
     val name = varchar("name", 50)
 }
 
 /** Entity */
-class State(
+class Country(
     id: EntityID<Long>) : Entity<Long>(id
 ) {
-    companion object : EntityClass<Long, State>(States)
-    var name by States.name
+    companion object : EntityClass<Long, Country>(Countries)
+    var name by Countries.name
 }

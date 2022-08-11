@@ -8,10 +8,11 @@ spring:
     username: sa
     password:
 
-
 logging:
   level:
     Exposed: DEBUG
+    org.ktorm: DEBUG
+    root: error
 
 test:
    xxx: ddd

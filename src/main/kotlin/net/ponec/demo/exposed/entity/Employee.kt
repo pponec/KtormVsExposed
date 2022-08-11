@@ -24,12 +24,3 @@ class Employee(
     var city by City referencedOn Employees.cityId
     var department by Department referencedOn Employees.departmentId
 }
-
-/** DTO object */
-class EmployeeDto(
-    var id: Long,
-    var name: String,
-    var city: String,
-    var state: String,
-    var department: String,
-)

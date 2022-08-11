@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 /** Table */
 object Cities : LongIdTable("city") {
     val name = varchar("name", 50)
-    var stateId = reference("state_id", States.id)
+    var countryId = reference("country_id", Countries.id)
 }
 
 /** Entity */
@@ -17,5 +17,5 @@ class City(
 ) {
     companion object : EntityClass<Long, City>(Cities)
     var name by Cities.name
-    var state by State referencedOn Cities.stateId
+    var country by Country referencedOn Cities.countryId
 }

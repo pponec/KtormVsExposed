@@ -1,8 +1,9 @@
 package net.ponec.demo.exposed.service
 
-import net.ponec.demo.exposed.entity.EmployeeDto
+import net.ponec.demo.controller.EmployeeDto
 
-interface DataService {
+
+interface ExposedService {
 
     /** Return all employes */
     fun findAllEmployees() : List<EmployeeDto>
