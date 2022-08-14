@@ -1,6 +1,5 @@
 package net.ponec.demo
 
-import com.fasterxml.jackson.databind.Module
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.spring.SpringTransactionManager
 import org.jetbrains.exposed.sql.Database
@@ -21,7 +20,7 @@ fun main(args: Array<String>) {
 }
 
 @Configuration
-public class Configuration() {
+class Configuration {
     @Bean
     fun transactionManager(dataSource: HikariDataSource): SpringTransactionManager {
         return SpringTransactionManager(dataSource)

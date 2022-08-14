@@ -39,11 +39,11 @@ class ExposedServiceImpl(
     }
 
     /** Return all employes
-     * @see https://github.com/JetBrains/Exposed
+     * See: https://github.com/JetBrains/Exposed
      */
     @Transactional
     override fun findAllEmployees(): List<EmployeeDto> {
-        var result = mutableListOf1<EmployeeDto>()
+        val result = mutableListOf1<EmployeeDto>()
         val employeeQuery = Employees
             .innerJoin(Cities)
             .innerJoin(Countries)
@@ -59,7 +59,7 @@ class ExposedServiceImpl(
         employees.forEach { employee ->
             println(">>> ${employee.id}: ${employee.name} ${employee.city.country.name}")
 
-            var employeeDto = EmployeeDto(
+            val employeeDto = EmployeeDto(
                 id = employee.id.value,
                 name = employee.name,
                 city = employee.city.name,
@@ -73,33 +73,33 @@ class ExposedServiceImpl(
 
     private fun initDataByDao() {
 
-        var countryObj = Country.new {
+        val countryObj = Country.new {
             name = "France"
         }
 
-        var cityObj = City.new {
+        val cityObj = City.new {
             name = "Paris"
             country = countryObj
         }
 
-        var departmentObj = Department.new {
+        val departmentObj = Department.new {
             name = "Developers"
         }
 
         // org.h2.jdbc.JdbcSQLDataException: Serializace selhala, příčina: "java.io.NotSerializableException: org.jetbrains.exposed.dao.DaoEntityID"
-        var employee1 = Employee.new {
+        val employee1 = Employee.new {
             name = "George"
             city = cityObj
             department = departmentObj
         }
 
-        var employee2 = Employee.new {
+        val employee2 = Employee.new {
             name = "Francis"
             city = cityObj
             department = departmentObj
         }
 
-        var employee3 = Employee.new {
+        val employee3 = Employee.new {
             name = "Joseph"
             city = cityObj
             department = departmentObj

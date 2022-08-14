@@ -4,7 +4,7 @@ spring:
   datasource:
     driverClassName: org.h2.Driver
     platform: postgres
-    url: jdbc:h2:mem:testC2
+    url: jdbc:h2:mem:myTest
     username: sa
     password:
 

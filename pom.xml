@@ -20,16 +20,16 @@
     <dependencies>
 
         <!-- Exposed -->
-		<dependency>
-			<groupId>org.jetbrains.exposed</groupId>
-			<artifactId>exposed-core</artifactId>
-			<version>0.38.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jetbrains.exposed</groupId>
-			<artifactId>exposed-dao</artifactId>
-			<version>0.38.2</version>
-		</dependency>
+        <dependency>
+            <groupId>org.jetbrains.exposed</groupId>
+            <artifactId>exposed-core</artifactId>
+            <version>0.38.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.exposed</groupId>
+            <artifactId>exposed-dao</artifactId>
+            <version>0.38.2</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.exposed</groupId>
             <artifactId>exposed-jdbc</artifactId>
@@ -47,20 +47,9 @@
         </dependency>
 
         <!--- Ktorm -->
-
         <dependency>
             <groupId>org.ktorm</groupId>
             <artifactId>ktorm-core</artifactId>
-            <version>3.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ktorm</groupId>
-            <artifactId>ktorm-core</artifactId>
-            <version>3.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ktorm</groupId>
-                <artifactId>ktorm-global</artifactId>
             <version>3.5.0</version>
         </dependency>
         <dependency>
@@ -68,6 +57,11 @@
             <artifactId>ktorm-support-postgresql</artifactId>
             <version>3.5.0</version>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.ktorm</groupId>-->
+        <!--                <artifactId>ktorm-global</artifactId>-->
+        <!--            <version>3.5.0</version>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.zaxxer</groupId>

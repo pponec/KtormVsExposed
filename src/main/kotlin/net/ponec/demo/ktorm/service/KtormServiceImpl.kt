@@ -24,7 +24,7 @@ class KtormServiceImpl(
     /** Return all employess by the Entity model. */
     @Transactional
     override fun findAllEmployeesByEntity(): List<EmployeeDto> {
-        var result = mutableListOf1<EmployeeDto>()
+        val result = mutableListOf1<EmployeeDto>()
 
         val employees: Sequence<Employee> = database.employees
             .filter { it.departmentId greaterEq 0L }
@@ -36,7 +36,7 @@ class KtormServiceImpl(
         employees.forEach { employee ->
             println(">>> ${employee.id}: ${employee.name} ${employee.city.country.name}")
 
-            var employeeDto = EmployeeDto(
+            val employeeDto = EmployeeDto(
                 id = employee.id,
                 name = employee.name,
                 city = employee.city.name,
@@ -53,18 +53,18 @@ class KtormServiceImpl(
     override fun findAllEmployeesByTable(): List<EmployeeDto> {
         val result = database
             .from(Employees)
-            .innerJoin(Departments)
-            .innerJoin(Cities)
-            .innerJoin(Countries)
+            .innerJoin(Departments, on = Employees.departmentId eq Departments.id)
+            .innerJoin(Cities, on = Employees.cityId eq Cities.id)
+            .innerJoin(Countries, on = Cities.countryId eq Countries.id)
             .select()
             .limit(offset = 0, 50)
             .where { Employees.departmentId greaterEq 0L }
             .map {  EmployeeDto(
-                id = it.get(Employees.id) ?: 0L,
-                name = it.get(Employees.name) ?: "",
-                department = it.get(Departments.name) ?: "",
-                city = it.get(Cities.name) ?: "",
-                country =  it.get(Countries.name) ?: "",
+                id = it[Employees.id] ?: 0L,
+                name = it[Employees.name] ?: "",
+                department = it[Departments.name] ?: "",
+                city = it[Cities.name] ?: "",
+                country =  it[Countries.name] ?: "",
             )}
             .toList()
 
@@ -81,54 +81,46 @@ class KtormServiceImpl(
      * Source: https://www.ktorm.org/en/entity-dml.html#Insert
      */
     private fun initDataByDao() {
-        if (true) return
 
-        var country = Country {
-            id = 100L
+        val myCountry = Country {
             name = "USA"
         }
-        println(">>> Country: id=${country.id}, name=${country.name}")
-        database.countries.add(country)
+        println(">>> Country: id=${myCountry.id}, name=${myCountry.name}")
 
-        var city = City {
-            id = 200L
-            country = country
+        val myCity = City {
+            country = myCountry
             name = "New York"
         }
-        database.cities.add(city)
 
-        var department = Department {
-            id = -3L
+        val myDepartment = Department {
             name = "Technical Support"
         }
-        database.departments.add(department)
 
-        var employee1 = Employee {
-            id = -4L
+        val employee1 = Employee {
             name = "Catherine"
-            city = city
-            department = department
+            city = myCity
+            department = myDepartment
         }
 
-        var employee2 = Employee {
-            id = -5L
+        val employee2 = Employee {
             name = "Lucy"
-            city = city
-            department = department
+            city = myCity
+            department = myDepartment
         }
 
-        var employee3 = Employee {
-            id = -6L
+        val employee3 = Employee {
             name = "Elisabeth"
-            city = city
-            department = department
+            city = myCity
+            department = myDepartment
         }
 
+        database.countries.add(myCountry)
+        database.cities.add(myCity)
+        database.departments.add(myDepartment)
         database.employees.add(employee1)
         database.employees.add(employee2)
         database.employees.add(employee3)
 
-
-        println("Users: \$employee1, \$employee2, \$employee3")
+        println("Users by Ktorm: $employee1.id, $employee2.id, $employee3.id")
     }
 }
