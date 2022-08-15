@@ -12,8 +12,8 @@ object Departments : LongIdTable("department") {
 
 /** Entity */
 class Department(
-    id: EntityID<Long>) : Entity<Long>(id
-) {
+    id: EntityID<Long>
+) : Entity<Long>(id) {
     companion object : EntityClass<Long, Department>(Departments)
 
     var name by Departments.name

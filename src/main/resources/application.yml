@@ -13,6 +13,3 @@ logging:
     Exposed: DEBUG
     org.ktorm: DEBUG
     root: error
-
-test:
-   xxx: ddd

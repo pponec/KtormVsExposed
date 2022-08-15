@@ -13,9 +13,10 @@ object Cities : LongIdTable("city") {
 
 /** Entity */
 class City(
-    id: EntityID<Long>) : Entity<Long>(id
-) {
+    id: EntityID<Long>
+) : Entity<Long>(id) {
     companion object : EntityClass<Long, City>(Cities)
+
     var name by Cities.name
     var country by Country referencedOn Cities.countryId
 }

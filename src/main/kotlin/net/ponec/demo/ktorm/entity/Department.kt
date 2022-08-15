@@ -11,6 +11,7 @@ import org.ktorm.schema.varchar
 /** Entity */
 interface Department : Entity<Department> {
     companion object : Entity.Factory<Department>()
+
     var id: Long
     var name: String
 }

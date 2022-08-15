@@ -12,6 +12,7 @@ import org.ktorm.schema.varchar
  * We need to define entity classes firstly and bind table objects to them */
 interface Employee : Entity<Employee> {
     companion object : Entity.Factory<Employee>()
+
     var id: Long
     var name: String
     var city: City

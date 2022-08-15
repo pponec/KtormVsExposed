@@ -3,6 +3,10 @@
 A simple Kotlin project to test ORM frameworks [Expose](https://github.com/JetBrains/Exposed/wiki/DAO) and [Ktorm](https://www.ktorm.org/en/schema-definition.html).
 The application is based on [Spring Boot](https://spring.io/projects/spring-boot) framework.
 
+## Entity model:
+
+![](docs/EntityModel.png)
+
 ## How to run:
 
 1. Set Java environment to version 17, for example: <br />

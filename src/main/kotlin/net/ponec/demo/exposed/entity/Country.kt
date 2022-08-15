@@ -12,8 +12,9 @@ object Countries : LongIdTable("country") {
 
 /** Entity */
 class Country(
-    id: EntityID<Long>) : Entity<Long>(id
-) {
+    id: EntityID<Long>
+) : Entity<Long>(id) {
     companion object : EntityClass<Long, Country>(Countries)
+
     var name by Countries.name
 }
