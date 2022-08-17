@@ -7,7 +7,7 @@ import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import kotlin.collections.mutableListOf as mutableListOf1
+import java.time.LocalDate
 import net.ponec.demo.ktorm.service.KtormService as KtormDataService
 
 
@@ -42,8 +42,8 @@ class ExposedServiceImpl(
      * See: https://github.com/JetBrains/Exposed
      */
     @Transactional
-    override fun findAllEmployees(): List<EmployeeDto> {
-        val result = mutableListOf1<EmployeeDto>()
+    override fun findAllEmployeesByEntity(): List<EmployeeDto> {
+        val result = mutableListOf<EmployeeDto>()
         val employeeQuery = Employees
             .innerJoin(Cities)
             .innerJoin(Countries)
@@ -53,7 +53,10 @@ class ExposedServiceImpl(
                         Countries.name.isNotNull()
             }
             .limit(50, offset = 0)
-            .orderBy(Employees.id to SortOrder.ASC)
+            .orderBy(
+                Cities.name to SortOrder.ASC,
+                Employees.name to SortOrder.ASC
+            )
         val employees = Employee.wrapRows(employeeQuery)
 
         employees.forEach { employee ->
@@ -63,11 +66,47 @@ class ExposedServiceImpl(
                 id = employee.id.value,
                 name = employee.name,
                 city = employee.city.name,
+                supervisor = employee.supervisor?.name,
                 country = employee.city.country.name,
-                department = employee.department.name
+                department = employee.department.name,
+                contractDay = employee.contractDay
             )
             result.add(employeeDto)
         }
+        return result
+    }
+
+    /** Alias tutorial: https://github.com/JetBrains/Exposed/wiki/DSL#alias */
+    @Transactional
+    override fun findAllEmployeesByTable(): List<EmployeeDto> {
+        val supervisor = Employees.alias("supervisor")
+        val result = Employees
+            .innerJoin(Departments)
+            .innerJoin(Cities)
+            .innerJoin(Countries)
+            .innerJoin(supervisor, { Employees.id }, { supervisor[Employees.id] })
+            .select {
+                Employees.id greaterEq 1L and
+                        Employees.name.isNotNull() and
+                        Countries.name.isNotNull()
+            }
+            .limit(50, offset = 0)
+            .orderBy(
+                Cities.name to SortOrder.ASC,
+                Employees.name to SortOrder.ASC
+            )
+            .map {
+                EmployeeDto(
+                    id = it[Employees.id].value,
+                    name = it[Employees.name],
+                    supervisor = it[supervisor[Employees.name]], // TODO:pop How to get a name of the superior?
+                    city = it[Cities.name],
+                    country = it[Countries.name],
+                    department = it[Departments.name],
+                    contractDay = it[Employees.contractDay],
+                )
+            }
+            .toList()
         return result
     }
 
@@ -91,18 +130,24 @@ class ExposedServiceImpl(
             name = "George"
             city = cityObj
             department = departmentObj
+            supervisor = null
+            contractDay = LocalDate.of(2020, 1, 1)
         }
 
         val employee2 = Employee.new {
             name = "Francis"
             city = cityObj
             department = departmentObj
+            supervisor = employee1
+            contractDay = LocalDate.of(2020, 1, 2)
         }
 
         val employee3 = Employee.new {
             name = "Joseph"
             city = cityObj
             department = departmentObj
+            supervisor = employee1
+            contractDay = LocalDate.of(2020, 1, 3)
         }
 
         println("Users: $employee1, $employee2, $employee3")

@@ -10,6 +10,7 @@ import org.ktorm.schema.varchar
 /** Entity */
 interface Country : Entity<Country> {
     companion object : Entity.Factory<Country>()
+
     var id: Long
     var name: String
 }

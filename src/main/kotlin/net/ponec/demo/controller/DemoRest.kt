@@ -18,21 +18,28 @@ class DemoRest(
     }
 
     /** Call an Exposed service.
-     * URL: http://localhost:8080/employees  */
-    @GetMapping(value = ["employeesExp"])
-    fun findAllEmployees(): List<EmployeeDto> {
-        return exposedService.findAllEmployees()
+     * URL: http://localhost:8080/employeesExpByEntity */
+    @GetMapping(value = ["employeesExpByEntity"])
+    fun findAllEmployeesByEntity(): List<EmployeeDto> {
+        return exposedService.findAllEmployeesByEntity()
+    }
+
+    /** Call an Exposed service.
+     * URL: http://localhost:8080/employeesExpByTable */
+    @GetMapping(value = ["employeesExpByTable"])
+    fun findAllEmployeesByTable(): List<EmployeeDto> {
+        return exposedService.findAllEmployeesByTable()
     }
 
     /** Call a Ktorm service.
-     * URL: http://localhost:8080/employees2  */
+     * URL: http://localhost:8080/employeesKtormByEntity  */
     @GetMapping(value = ["employeesKtormByEntity"])
     fun findAllEmployees2(): List<EmployeeDto> {
         return ktormService.findAllEmployeesByEntity()
     }
 
     /** Call a Ktorm service.
-     * URL: http://localhost:8080/employees2  */
+     * URL: http://localhost:8080/employeesKtormByTable  */
     @GetMapping(value = ["employeesKtormByTable"])
     fun findAllEmployees3(): List<EmployeeDto> {
         return ktormService.findAllEmployeesByTable()

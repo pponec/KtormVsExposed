@@ -23,5 +23,5 @@ Apache License, Version 2.0
 
 
 1. [Exposed tutorial](https://github.com/JetBrains/Exposed/wiki/DAO)
-2. [Ktorm tutorial](https://www.ktorm.org/en/schema-definition.html)
+2. [Ktorm tutorial](https://www.ktorm.org/en/entities-and-column-binding.html)
 3. [How we use Kotlin with Exposed at TouK](https://touk.pl/blog/2019/02/12/how-we-use-kotlin-with-exposed-at-touk/) (blog)

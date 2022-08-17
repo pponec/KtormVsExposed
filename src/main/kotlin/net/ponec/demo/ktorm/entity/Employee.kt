@@ -4,8 +4,10 @@ import org.ktorm.database.Database
 import org.ktorm.entity.Entity
 import org.ktorm.entity.sequenceOf
 import org.ktorm.schema.Table
+import org.ktorm.schema.date
 import org.ktorm.schema.long
 import org.ktorm.schema.varchar
+import java.time.LocalDate
 
 
 /** Entity
@@ -15,17 +17,20 @@ interface Employee : Entity<Employee> {
 
     var id: Long
     var name: String
-    var city: City
+    var supervisor: Employee?
     var department: Department
+    var city: City
+    var contractDay: LocalDate?
 }
-
 
 /** Table */
 object Employees : Table<Employee>("employee") {
     val id = long("id").primaryKey().bindTo { it.id }
     val name = varchar("name").bindTo { it.name }
-    val cityId = long("city_id").references(Cities) { it.city }
+    val supervisorId = long("supervisor_id").bindTo { it.supervisor?.id }  // pop: No reference() ?
     val departmentId = long("department_id").references(Departments) { it.department }
+    val cityId = long("city_id").references(Cities) { it.city }
+    val contractDay = date("contract_day").bindTo { it.contractDay }
 }
 
 /**

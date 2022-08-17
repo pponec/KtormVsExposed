@@ -7,6 +7,7 @@ import org.ktorm.dsl.*
 import org.ktorm.entity.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import kotlin.collections.mutableListOf as mutableListOf1
 
 /** Ktorm service implementation */
@@ -24,48 +25,56 @@ class KtormServiceImpl(
     /** Return all employess by the Entity model. */
     @Transactional
     override fun findAllEmployeesByEntity(): List<EmployeeDto> {
-        val result = mutableListOf1<EmployeeDto>()
-
-        val employees: Sequence<Employee> = database.employees
+        val result = database
+            .sequenceOf(Employees, withReferences = true) // or simply: employees
+            // TODO:pop How to join related entities?
             .filter { it.departmentId greaterEq 0L }
-            .sortedBy { it.id.asc() }
-            .drop(0) // limit
-            .take(10) // offset
-            .asKotlinSequence()
+            .sortedBy { it.name }
+            //.sortedBy { Cities.name.asc() } // TODO:pop How to sort result by related columns?
+            .take(10) // limit
+            .drop(0)  // offset
+            .asKotlinSequence() // optional
+            .map {
+                EmployeeDto(
+                    id = it.id,
+                    name = it.name,
+                    supervisor = it.supervisor?.name,
+                    city = it.city.name,
+                    country = it.city.country.name,
+                    department = it.department.name,
+                    contractDay = it.contractDay
+                )
+            }
+            .toList()
 
-        employees.forEach { employee ->
-            println(">>> ${employee.id}: ${employee.name} ${employee.city.country.name}")
-
-            val employeeDto = EmployeeDto(
-                id = employee.id,
-                name = employee.name,
-                city = employee.city.name,
-                country = employee.city.country.name,
-                department = employee.department.name
-            )
-            result.add(employeeDto)
-        }
         return result
     }
 
     /** Return all employess by the Table model. */
     @Transactional
     override fun findAllEmployeesByTable(): List<EmployeeDto> {
+        val supervisor = Employees.aliased("supervisor")
         val result = database
             .from(Employees)
-            .innerJoin(Departments, on = Employees.departmentId eq Departments.id)
-            .innerJoin(Cities, on = Employees.cityId eq Cities.id)
-            .innerJoin(Countries, on = Cities.countryId eq Countries.id)
+            .innerJoin(Departments, on = Departments.id eq Employees.departmentId)
+            .innerJoin(Cities, on = Cities.id eq Employees.cityId)
+            .innerJoin(Countries, on = Countries.id eq Cities.countryId)
+            //.innerJoin(supervisor, on = supervisor[Employees.id] eq Employees.supervisorId) // TODO:pop How to circle relations?
             .select()
             .limit(offset = 0, 50)
             .where { Employees.departmentId greaterEq 0L }
-            .map {  EmployeeDto(
-                id = it[Employees.id] ?: 0L,
-                name = it[Employees.name] ?: "",
-                department = it[Departments.name] ?: "",
-                city = it[Cities.name] ?: "",
-                country =  it[Countries.name] ?: "",
-            )}
+            .orderBy(Cities.name.asc(), Employees.name.asc())
+            .map {
+                EmployeeDto(
+                    id = it[Employees.id] ?: 0L,
+                    name = it[Employees.name] ?: "",
+                    supervisor = /*it[superiors.name] ?:*/ "?",  // TODO:pop how to read a superior name?
+                    department = it[Departments.name] ?: "",
+                    city = it[Cities.name] ?: "",
+                    country = it[Countries.name] ?: "",
+                    contractDay = it[Employees.contractDay], // nullable
+                )
+            }
             .toList()
 
         return result
@@ -100,19 +109,26 @@ class KtormServiceImpl(
             name = "Catherine"
             city = myCity
             department = myDepartment
+            supervisor = null
+            contractDay = LocalDate.of(2020, 2, 10)
         }
 
         val employee2 = Employee {
             name = "Lucy"
             city = myCity
             department = myDepartment
+            supervisor = employee1
+            contractDay = LocalDate.of(2020, 2, 11)
         }
 
-        val employee3 = Employee {
-            name = "Elisabeth"
-            city = myCity
-            department = myDepartment
-        }
+        // A different approach to create object:
+        val employee3 = Entity.create<Employee>() // or Entity()
+        employee3.name = "Elisabeth"
+        employee3.city = myCity
+        employee3.department = myDepartment
+        employee3.supervisor = employee1
+        employee3.contractDay = LocalDate.of(2020, 2, 12)
+
 
         database.countries.add(myCountry)
         database.cities.add(myCity)
