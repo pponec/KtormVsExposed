@@ -24,7 +24,9 @@ interface Employee : Entity<Employee> {
 }
 
 /** Table */
-object Employees : Table<Employee>("employee") {
+class Employees(alias: String? = null) : Table<Employee>("employee", alias) {
+    override fun aliased(alias: String) = Employees(alias)
+
     val id = long("id").primaryKey().bindTo { it.id }
     val name = varchar("name").bindTo { it.name }
     val supervisorId = long("supervisor_id").bindTo { it.supervisor?.id }  // pop: No reference() ?
@@ -36,4 +38,4 @@ object Employees : Table<Employee>("employee") {
 /**
  * Return a default entity sequence of Table
  */
-val Database.employees get() = this.sequenceOf(Employees)
+val Database.employees get() = this.sequenceOf(Employees())

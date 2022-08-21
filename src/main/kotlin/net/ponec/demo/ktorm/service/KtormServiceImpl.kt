@@ -8,7 +8,6 @@ import org.ktorm.entity.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import kotlin.collections.mutableListOf as mutableListOf1
 
 /** Ktorm service implementation */
 @Service
@@ -26,7 +25,7 @@ class KtormServiceImpl(
     @Transactional
     override fun findAllEmployeesByEntity(): List<EmployeeDto> {
         val result = database
-            .sequenceOf(Employees, withReferences = true) // or simply: employees
+            .sequenceOf(Employees(), withReferences = true) // or simply: employees
             // TODO:pop How to join related entities?
             .filter { it.departmentId greaterEq 0L }
             .sortedBy { it.name }
@@ -50,29 +49,33 @@ class KtormServiceImpl(
         return result
     }
 
-    /** Return all employess by the Table model. */
+    /** Return all employess by the Table model.
+     *
+     * Example: https://androidrepo.com/repo/kotlin-orm-ktorm
+     * */
     @Transactional
     override fun findAllEmployeesByTable(): List<EmployeeDto> {
-        val supervisor = Employees.aliased("supervisor")
+        val employees = Employees() // pop: Employees must not be singleton (!)
+        val supervisors = employees.aliased("supervisor")
         val result = database
-            .from(Employees)
-            .innerJoin(Departments, on = Departments.id eq Employees.departmentId)
-            .innerJoin(Cities, on = Cities.id eq Employees.cityId)
-            .innerJoin(Countries, on = Countries.id eq Cities.countryId)
-            //.innerJoin(supervisor, on = supervisor[Employees.id] eq Employees.supervisorId) // TODO:pop How to circle relations?
-            .select()
+            .from(employees)
+            .innerJoin(Departments, on = employees.departmentId eq Departments.id)
+            .innerJoin(Cities, on = employees.cityId eq Cities.id)
+            .innerJoin(Countries, on = Cities.countryId eq Countries.id)
+            .leftJoin(supervisors, on = employees.supervisorId eq supervisors.id) // TODO:pop How to circle relations?
+            .select(employees.id, employees.name, supervisors.name, Departments.name, Cities.name, Countries.name, employees.contractDay)
             .limit(offset = 0, 50)
-            .where { Employees.departmentId greaterEq 0L }
-            .orderBy(Cities.name.asc(), Employees.name.asc())
+            .where { employees.departmentId greaterEq 0L }
+            .orderBy(Cities.name.asc(), employees.name.asc())
             .map {
                 EmployeeDto(
-                    id = it[Employees.id] ?: 0L,
-                    name = it[Employees.name] ?: "",
-                    supervisor = /*it[superiors.name] ?:*/ "?",  // TODO:pop how to read a superior name?
+                    id = it[employees.id] ?: 0L,
+                    name = it[employees.name] ?: "",
+                    supervisor = it[supervisors.name],
                     department = it[Departments.name] ?: "",
                     city = it[Cities.name] ?: "",
                     country = it[Countries.name] ?: "",
-                    contractDay = it[Employees.contractDay], // nullable
+                    contractDay = it[employees.contractDay], // nullable
                 )
             }
             .toList()
