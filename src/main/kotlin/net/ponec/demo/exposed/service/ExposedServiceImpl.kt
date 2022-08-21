@@ -76,7 +76,9 @@ class ExposedServiceImpl(
         return result
     }
 
-    /** Alias tutorial: https://github.com/JetBrains/Exposed/wiki/DSL#alias */
+    /** Alias tutorial: https://github.com/JetBrains/Exposed/wiki/DSL#alias.
+     * See example: https://github.com/JetBrains/Exposed/issues/177
+     */
     @Transactional
     override fun findAllEmployeesByTable(): List<EmployeeDto> {
         val supervisor = Employees.alias("supervisor")
@@ -84,7 +86,7 @@ class ExposedServiceImpl(
             .innerJoin(Departments)
             .innerJoin(Cities)
             .innerJoin(Countries)
-            .innerJoin(supervisor, { Employees.id }, { supervisor[Employees.id] })
+            .leftJoin(supervisor, { supervisor[Employees.id] }, { Employees.supervisorId })
             .select {
                 Employees.id greaterEq 1L and
                         Employees.name.isNotNull() and
@@ -99,7 +101,7 @@ class ExposedServiceImpl(
                 EmployeeDto(
                     id = it[Employees.id].value,
                     name = it[Employees.name],
-                    supervisor = it[supervisor[Employees.name]], // TODO:pop How to get a name of the superior?
+                    supervisor = it[supervisor[Employees.name]],
                     city = it[Cities.name],
                     country = it[Countries.name],
                     department = it[Departments.name],

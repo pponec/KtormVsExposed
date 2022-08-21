@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.javatime.date
  * see :  https://stackoverflow.com/questions/66109368/kotlin-exposed-create-entity-with-reference */
 object Employees : LongIdTable("employee") {
     val name = varchar("name", 50)
-    val supervisorId = reference("supervisor_id", Employees.id).nullable()
+    val supervisorId = optReference("supervisor_id", Employees.id)
     val departmentId = reference("department_id", Departments.id)
     val cityId = reference("city_id", Cities.id)
     val contractDay = date("contract_day").nullable()
