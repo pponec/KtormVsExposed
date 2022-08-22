@@ -36,6 +36,13 @@ class Employees(alias: String? = null) : Table<Employee>("employee", alias) {
 }
 
 /**
+ * Default instance of the model.
+ */
+object DbConstants {
+    internal val INSTANCE = Employees()
+}
+
+/**
  * Return a default entity sequence of Table
  */
-val Database.employees get() = this.sequenceOf(Employees())
+val Database.employees get() = this.sequenceOf(DbConstants.INSTANCE)

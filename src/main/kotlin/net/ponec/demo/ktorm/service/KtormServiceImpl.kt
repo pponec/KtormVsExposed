@@ -29,7 +29,7 @@ class KtormServiceImpl(
             // TODO:pop How to join related entities?
             .filter { it.departmentId greaterEq 0L }
             .sortedBy { it.name }
-            //.sortedBy { Cities.name.asc() } // TODO:pop How to sort result by related columns?
+            .sortedBy { Cities.name.asc() } // TODO:pop How to sort result by related columns?
             .take(10) // limit
             .drop(0)  // offset
             .asKotlinSequence() // optional
