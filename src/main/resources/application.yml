@@ -4,6 +4,7 @@ spring:
   datasource:
     driverClassName: org.h2.Driver
     platform: postgres
+    // ;MODE=PostgreSQL is unsuitable due to error: Syntax error in SQL statement "CREATE TABLE ..."
     url: jdbc:h2:mem:myTest
     //url: jdbc:h2:~/h2/myTest
     username: sa
