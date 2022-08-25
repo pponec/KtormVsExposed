@@ -17,13 +17,23 @@ interface City : Entity<City> {
 }
 
 /** Table */
-object Cities : Table<City>("city") {
+class Cities(alias: String? = null) : Table<City>("city", alias) {
     val id = long("id").primaryKey().bindTo { it.id }
     val name = varchar("name").bindTo { it.name }
-    val countryId = long("country_id").references(Countries) { it.country }
+    val countryId = long("country_id").references(Countries.instance) { it.country }
+
+    // Optional relation(s):
+    val country = countryId.referenceTable as Countries
+
+    override fun aliased(alias: String) = Cities(alias)
+
+    // Helper methods
+    companion object {
+        val instance = Cities()
+    }
 }
 
 /**
  * Return a default entity sequence of Table
  */
-val Database.cities get() = this.sequenceOf(Cities)
+val Database.cities get() = this.sequenceOf(Cities.instance)

@@ -25,24 +25,27 @@ interface Employee : Entity<Employee> {
 
 /** Table */
 class Employees(alias: String? = null) : Table<Employee>("employee", alias) {
-    override fun aliased(alias: String) = Employees(alias)
-
     val id = long("id").primaryKey().bindTo { it.id }
     val name = varchar("name").bindTo { it.name }
-    val supervisorId = long("supervisor_id").bindTo { it.supervisor?.id }  // pop: No reference() ?
-    val departmentId = long("department_id").references(Departments) { it.department }
-    val cityId = long("city_id").references(Cities) { it.city }
+    val supervisorId = long("supervisor_id").bindTo { it.supervisor?.id }  // pop: Why not reference() ?
+    val departmentId = long("department_id").references(Departments.instance) { it.department }
+    val cityId = long("city_id").references(Cities.instance) { it.city }
     val contractDay = date("contract_day").bindTo { it.contractDay }
-}
 
-/**
- * Default instance of the model.
- */
-object DbConstants {
-    internal val INSTANCE = Employees()
+    // Optional relations:
+    //val supervisor = supervisorId.referenceTable as Employees // NPE
+    val department = departmentId.referenceTable as Departments
+    val city = cityId.referenceTable as Cities
+
+    override fun aliased(alias: String) = Employees(alias)
+
+    // Helper methods
+    companion object {
+        val instance = Employees()
+    }
 }
 
 /**
  * Return a default entity sequence of Table
  */
-val Database.employees get() = this.sequenceOf(DbConstants.INSTANCE)
+val Database.employees get() = this.sequenceOf(Employees.instance)

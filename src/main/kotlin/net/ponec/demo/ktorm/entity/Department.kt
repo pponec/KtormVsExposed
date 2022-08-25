@@ -17,12 +17,19 @@ interface Department : Entity<Department> {
 }
 
 /** Table */
-object Departments : Table<Department>("department") {
+class Departments(alias: String? = null) : Table<Department>("department", alias) {
     var id = long("id").primaryKey().bindTo { it.id }
     var name = varchar("name").bindTo { it.name }
+
+    override fun aliased(alias: String) = Departments(alias)
+
+    // Helper methods
+    companion object {
+        val instance = Departments()
+    }
 }
 
 /**
  * Return a default entity sequence of Table
  */
-val Database.departments get() = this.sequenceOf(Departments)
+val Database.departments get() = this.sequenceOf(Departments.instance)

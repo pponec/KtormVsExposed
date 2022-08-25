@@ -24,12 +24,17 @@ class KtormServiceImpl(
     /** Return all employess by the Entity model. */
     @Transactional
     override fun findAllEmployeesByEntity(): List<EmployeeDto> {
+        if (false) {
+            val result2 = database.sequenceOf(Employees())
+                .filter { (it.supervisorId.referenceTable as Employees).name eq "John" } // NPE (?)
+                .toList()
+            println("Count: ${result2.size}")
+        }
+
         val result = database
-            .sequenceOf(Employees(), withReferences = true) // or simply: employees
-            // TODO:pop How to join related entities?
+            .sequenceOf(Employees())
             .filter { it.departmentId greaterEq 0L }
-            .sortedBy { it.name }
-            .sortedBy { Cities.name.asc() } // TODO:pop How to sort result by related columns?
+            .sortedBy({ it.city.name.asc() }, { it.name.asc() })
             .take(10) // limit
             .drop(0)  // offset
             .asKotlinSequence() // optional
@@ -59,22 +64,30 @@ class KtormServiceImpl(
         val supervisors = employees.aliased("supervisor")
         val result = database
             .from(employees)
-            .innerJoin(Departments, on = employees.departmentId eq Departments.id)
-            .innerJoin(Cities, on = employees.cityId eq Cities.id)
-            .innerJoin(Countries, on = Cities.countryId eq Countries.id)
+            .innerJoin(Departments.instance, on = employees.departmentId eq Departments.instance.id)
+            .innerJoin(Cities.instance, on = employees.cityId eq Cities.instance.id)
+            .innerJoin(Countries.instance, on = Cities.instance.countryId eq Countries.instance.id)
             .leftJoin(supervisors, on = employees.supervisorId eq supervisors.id) // TODO:pop How to circle relations?
-            .select(employees.id, employees.name, supervisors.name, Departments.name, Cities.name, Countries.name, employees.contractDay)
+            .select(
+                employees.id,
+                employees.name,
+                supervisors.name,
+                Departments.instance.name,
+                Cities.instance.name,
+                Countries.instance.name,
+                employees.contractDay
+            )
             .limit(offset = 0, 50)
             .where { employees.departmentId greaterEq 0L }
-            .orderBy(Cities.name.asc(), employees.name.asc())
+            .orderBy(Cities.instance.name.asc(), employees.name.asc())
             .map {
                 EmployeeDto(
                     id = it[employees.id] ?: 0L,
                     name = it[employees.name] ?: "",
                     supervisor = it[supervisors.name],
-                    department = it[Departments.name] ?: "",
-                    city = it[Cities.name] ?: "",
-                    country = it[Countries.name] ?: "",
+                    department = it[Departments.instance.name] ?: "",
+                    city = it[Cities.instance.name] ?: "",
+                    country = it[Countries.instance.name] ?: "",
                     contractDay = it[employees.contractDay], // nullable
                 )
             }

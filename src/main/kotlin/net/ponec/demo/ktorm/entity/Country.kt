@@ -16,12 +16,20 @@ interface Country : Entity<Country> {
 }
 
 /** Table */
-object Countries : Table<Country>("country") {
+class Countries(alias: String? = null) : Table<Country>("country", alias) {
+
     val id = long("id").primaryKey().bindTo { it.id }
     val name = varchar("name").bindTo { it.name }
+
+    // Helper methods:
+    override fun aliased(alias: String) = Countries(alias)
+
+    companion object {
+        val instance = Countries()
+    }
 }
 
 /**
  * Return a default entity sequence of Table
  */
-val Database.countries get() = this.sequenceOf(Countries)
+val Database.countries get() = this.sequenceOf(Countries.instance)
