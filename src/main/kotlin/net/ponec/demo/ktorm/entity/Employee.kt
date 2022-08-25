@@ -33,9 +33,11 @@ class Employees(alias: String? = null) : Table<Employee>("employee", alias) {
     val contractDay = date("contract_day").bindTo { it.contractDay }
 
     // Optional relations:
-    //val supervisor = supervisorId.referenceTable as Employees // NPE
     val department = departmentId.referenceTable as Departments
     val city = cityId.referenceTable as Cities
+    // NPE: Cyclic reference binding is not supported  - using the EntitySequence:
+    // https://github.com/kotlin-orm/ktorm/discussions/425#discussioncomment-3476971
+    // val supervisor = supervisorId.referenceTable as Employees
 
     override fun aliased(alias: String) = Employees(alias)
 
