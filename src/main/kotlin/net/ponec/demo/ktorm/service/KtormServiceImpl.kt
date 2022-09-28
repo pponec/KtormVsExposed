@@ -83,7 +83,7 @@ class KtormServiceImpl(
             .map {
                 EmployeeDto(
                     id = it[employees.id] ?: 0L,
-                    name = it[employees.name] ?: "",
+                    name = it[employees.name] ?: throw NoSuchElementException(),
                     supervisor = it[supervisors.name],
                     department = it[Departments.instance.name] ?: "",
                     city = it[Cities.instance.name] ?: "",
