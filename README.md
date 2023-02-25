@@ -1,4 +1,4 @@
-# Demo project based on Ktorm and Exposed ORM frameworks with on Spring Boot
+# Demo project based on Ktorm and Exposed ORM frameworks with Spring Boot
 
 A simple Kotlin project to test two ORM frameworks: [Expose](https://github.com/JetBrains/Exposed/wiki/DAO) and [Ktorm](https://www.ktorm.org/en/schema-definition.html).
 The application is based on [Spring Boot](https://spring.io/projects/spring-boot) framework.
