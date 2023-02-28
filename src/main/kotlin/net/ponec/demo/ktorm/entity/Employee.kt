@@ -27,7 +27,7 @@ interface Employee : Entity<Employee> {
 class Employees(alias: String? = null) : Table<Employee>("employee", alias) {
     val id = long("id").primaryKey().bindTo { it.id }
     val name = varchar("name").bindTo { it.name }
-    val supervisorId = long("supervisor_id").bindTo { it.supervisor?.id }  // pop: Why not reference() ?
+    val supervisorId = long("supervisor_id").bindTo { it.supervisor?.id }  // pop: No reference ?
     val departmentId = long("department_id").references(Departments.instance) { it.department }
     val cityId = long("city_id").references(Cities.instance) { it.city }
     val contractDay = date("contract_day").bindTo { it.contractDay }
