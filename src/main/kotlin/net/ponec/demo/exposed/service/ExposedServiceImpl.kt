@@ -66,7 +66,7 @@ class ExposedServiceImpl(
                 id = employee.id.value,
                 name = employee.name,
                 city = employee.city.name,
-                supervisor = employee.supervisor?.name,
+                superior = employee.superior?.name,
                 country = employee.city.country.name,
                 department = employee.department.name,
                 contractDay = employee.contractDay
@@ -81,12 +81,12 @@ class ExposedServiceImpl(
      */
     @Transactional
     override fun findAllEmployeesByTable(): List<EmployeeDto> {
-        val supervisor = Employees.alias("supervisor")
+        val superior = Employees.alias("superior")
         val result = Employees
             .innerJoin(Departments)
             .innerJoin(Cities)
             .innerJoin(Countries)
-            .leftJoin(supervisor, { supervisor[Employees.id] }, { Employees.supervisorId })
+            .leftJoin(superior, { superior[Employees.id] }, { Employees.superiorId })
             .select {
                 Employees.id greaterEq 1L and
                         Employees.name.isNotNull() and
@@ -101,7 +101,7 @@ class ExposedServiceImpl(
                 EmployeeDto(
                     id = it[Employees.id].value,
                     name = it[Employees.name],
-                    supervisor = it[supervisor[Employees.name]],
+                    superior = it[superior[Employees.name]],
                     city = it[Cities.name],
                     country = it[Countries.name],
                     department = it[Departments.name],
@@ -132,7 +132,7 @@ class ExposedServiceImpl(
             name = "George"
             city = cityObj
             department = departmentObj
-            supervisor = null
+            superior = null
             contractDay = LocalDate.of(2020, 1, 1)
         }
 
@@ -140,7 +140,7 @@ class ExposedServiceImpl(
             name = "Francis"
             city = cityObj
             department = departmentObj
-            supervisor = employee1
+            superior = employee1
             contractDay = LocalDate.of(2020, 1, 2)
         }
 
@@ -148,7 +148,7 @@ class ExposedServiceImpl(
             name = "Joseph"
             city = cityObj
             department = departmentObj
-            supervisor = employee1
+            superior = employee1
             contractDay = LocalDate.of(2020, 1, 3)
         }
 

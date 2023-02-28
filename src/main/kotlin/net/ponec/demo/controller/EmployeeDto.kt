@@ -6,7 +6,7 @@ import java.time.LocalDate
 class EmployeeDto(
     var id: Long,
     var name: String,
-    var supervisor: String?,
+    var superior: String?,
     var city: String,
     var country: String,
     var department: String,

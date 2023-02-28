@@ -17,7 +17,7 @@ interface Employee : Entity<Employee> {
 
     var id: Long
     var name: String
-    var supervisor: Employee?
+    var superior: Employee?
     var department: Department
     var city: City
     var contractDay: LocalDate?
@@ -27,7 +27,7 @@ interface Employee : Entity<Employee> {
 class Employees(alias: String? = null) : Table<Employee>("employee", alias) {
     val id = long("id").primaryKey().bindTo { it.id }
     val name = varchar("name").bindTo { it.name }
-    val supervisorId = long("supervisor_id").bindTo { it.supervisor?.id }  // pop: No reference ?
+    val superiorId = long("superior_id").bindTo { it.superior?.id }  // pop: No reference ?
     val departmentId = long("department_id").references(Departments.instance) { it.department }
     val cityId = long("city_id").references(Cities.instance) { it.city }
     val contractDay = date("contract_day").bindTo { it.contractDay }
@@ -37,7 +37,7 @@ class Employees(alias: String? = null) : Table<Employee>("employee", alias) {
     val city = cityId.referenceTable as Cities
     // NPE: Cyclic reference binding is not supported  - using the EntitySequence:
     // https://github.com/kotlin-orm/ktorm/discussions/425#discussioncomment-3476971
-    // val supervisor = supervisorId.referenceTable as Employees
+    // val superior = superiorId.referenceTable as Employees
 
     override fun aliased(alias: String) = Employees(alias)
 

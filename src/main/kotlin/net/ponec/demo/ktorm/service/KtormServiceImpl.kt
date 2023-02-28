@@ -26,7 +26,7 @@ class KtormServiceImpl(
     override fun findAllEmployeesByEntity(): List<EmployeeDto> {
         if (false) {
             val result2 = database.sequenceOf(Employees())
-                .filter { (it.supervisorId.referenceTable as Employees).name eq "John" } // NPE (?)
+                .filter { (it.superiorId.referenceTable as Employees).name eq "John" } // NPE (?)
                 .toList()
             println("Count: ${result2.size}")
         }
@@ -42,7 +42,7 @@ class KtormServiceImpl(
                 EmployeeDto(
                     id = it.id,
                     name = it.name,
-                    supervisor = it.supervisor?.name,
+                    superior = it.superior?.name,
                     city = it.city.name,
                     country = it.city.country.name,
                     department = it.department.name,
@@ -61,17 +61,17 @@ class KtormServiceImpl(
     @Transactional
     override fun findAllEmployeesByTable(): List<EmployeeDto> {
         val employees = Employees() // pop: Employees must not be singleton (!)
-        val supervisors = employees.aliased("supervisor")
+        val superiors = employees.aliased("superior")
         val result = database
             .from(employees)
             .innerJoin(Departments.instance, on = employees.departmentId eq Departments.instance.id)
             .innerJoin(Cities.instance, on = employees.cityId eq Cities.instance.id)
             .innerJoin(Countries.instance, on = Cities.instance.countryId eq Countries.instance.id)
-            .leftJoin(supervisors, on = employees.supervisorId eq supervisors.id) // TODO:pop How to circle relations?
+            .leftJoin(superiors, on = employees.superiorId eq superiors.id) // TODO:pop How to circle relations?
             .select(
                 employees.id,
                 employees.name,
-                supervisors.name,
+                superiors.name,
                 Departments.instance.name,
                 Cities.instance.name,
                 Countries.instance.name,
@@ -84,7 +84,7 @@ class KtormServiceImpl(
                 EmployeeDto(
                     id = it[employees.id] ?: 0L,
                     name = it[employees.name] ?: throw NoSuchElementException(),
-                    supervisor = it[supervisors.name],
+                    superior = it[superiors.name],
                     department = it[Departments.instance.name] ?: "",
                     city = it[Cities.instance.name] ?: "",
                     country = it[Countries.instance.name] ?: "",
@@ -125,7 +125,7 @@ class KtormServiceImpl(
             name = "Catherine"
             city = myCity
             department = myDepartment
-            supervisor = null
+            superior = null
             contractDay = LocalDate.of(2020, 2, 10)
         }
 
@@ -133,7 +133,7 @@ class KtormServiceImpl(
             name = "Lucy"
             city = myCity
             department = myDepartment
-            supervisor = employee1
+            superior = employee1
             contractDay = LocalDate.of(2020, 2, 11)
         }
 
@@ -142,7 +142,7 @@ class KtormServiceImpl(
         employee3.name = "Elisabeth"
         employee3.city = myCity
         employee3.department = myDepartment
-        employee3.supervisor = employee1
+        employee3.superior = employee1
         employee3.contractDay = LocalDate.of(2020, 2, 12)
 
 
